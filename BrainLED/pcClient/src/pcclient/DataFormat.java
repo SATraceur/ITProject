@@ -5,19 +5,17 @@
  */
 package pcclient;
 
-
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author yeqin
  */
 public class DataFormat {
+
     public int dataID;
     public int blink;
     public int winkLeft;
@@ -51,6 +49,5 @@ public class DataFormat {
         this.bawl = bawl;
         this.sob = sob;
     }
-    
-}
 
+}
