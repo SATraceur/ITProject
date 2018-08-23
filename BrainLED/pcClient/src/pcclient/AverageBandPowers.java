@@ -17,29 +17,32 @@ package pcclient;
 //import com.emotiv.Iedk.*;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.*;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 public class AverageBandPowers {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
         Pointer eEvent = Edk.INSTANCE.IEE_EmoEngineEventCreate();
         Pointer eState = Edk.INSTANCE.IEE_EmoStateCreate();
 
         IntByReference userID = null;
         boolean ready = false;
         int state = 0;
-
+PrintWriter writer = new PrintWriter("the-file-name.txt", "UTF-8");
         Edk.IEE_DataChannels_t dataChannel;
 
         userID = new IntByReference(0);
 
         if (Edk.INSTANCE.IEE_EngineConnect("Emotiv Systems-5") != EdkErrorCode.EDK_OK
                 .ToInt()) {
-            System.out.println("Emotiv Engine start up failed.");
+            writer.println("Emotiv Engine start up failed.");
             return;
         }
 
-        System.out.println("Start receiving Data!");
-        System.out.println("Theta, Alpha, Low_beta, High_beta, Gamma");
+        writer.println("Start receiving Data!");
+        writer.println("Theta, Alpha, Low_beta, High_beta, Gamma");
 
         while (true) {
             state = Edk.INSTANCE.IEE_EngineGetNextEvent(eEvent);
@@ -52,12 +55,12 @@ public class AverageBandPowers {
                 // Log the EmoState if it has been updated
                 if (eventType == Edk.IEE_Event_t.IEE_UserAdded.ToInt()) {
                     if (userID != null) {
-                        System.out.println("User added");
+                        writer.println("User added");
                         ready = true;
                     }
                 }
             } else if (state != EdkErrorCode.EDK_NO_EVENT.ToInt()) {
-                System.out.println("Internal error in Emotiv Engine!");
+                writer.println("Internal error in Emotiv Engine!");
                 break;
             }
 
@@ -72,19 +75,23 @@ public class AverageBandPowers {
                 for (int i = 3; i < 17; i++) {
                     int result = Edk.INSTANCE.IEE_GetAverageBandPowers(userID.getValue(), i, theta, alpha, low_beta, high_beta, gamma);
                     if (result == EdkErrorCode.EDK_OK.ToInt()) {
-                        System.out.print(theta.getValue());
-                        System.out.print(", ");
-                        System.out.print(alpha.getValue());
-                        System.out.print(", ");
-                        System.out.print(low_beta.getValue());
-                        System.out.print(", ");
-                        System.out.print(high_beta.getValue());
-                        System.out.print(", ");
-                        System.out.print(gamma.getValue());
-                        System.out.print(", ");
+                        writer.print(theta.getValue());
+                        writer.print(", ");
+                        writer.print(alpha.getValue());
+                        writer.print(", ");
+                        writer.print(low_beta.getValue());
+                        writer.print(", ");
+                        writer.print(high_beta.getValue());
+                        writer.print(", ");
+                        writer.print(gamma.getValue());
+                        writer.print(", ");
+                        writer.print("id: ");
+                        writer.print(i);
+                        writer.print(", ");
                     }
 
-                    System.out.println();
+                    writer.println();
+                    writer.flush();
                 }
             }
         }
