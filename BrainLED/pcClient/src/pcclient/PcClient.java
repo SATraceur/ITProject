@@ -21,17 +21,29 @@ import java.util.Scanner;
 //import com.emotiv.Iedk.*;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.*;
+import javax.swing.JFrame;
 
 /**
  *
  * @author yeqin
  */
 public class PcClient {
+        public static final int WIDTH = 640;
+    public static final int HEIGHT = 480;
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) throws Exception {
+               JFrame window = new JFrame("HeatMap GUI");
+        Panel panel = new Panel();
+        window.setSize(WIDTH, HEIGHT);
+        window.setResizable(true);
+        window.setLocationRelativeTo(null);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.add(panel);
+        window.setVisible(true);
+        panel.start();
         Pointer eEvent = Edk.INSTANCE.IEE_EmoEngineEventCreate();
         Pointer eState = Edk.INSTANCE.IEE_EmoStateCreate();
 
