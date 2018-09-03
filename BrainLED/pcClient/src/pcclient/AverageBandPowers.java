@@ -30,7 +30,7 @@ public class AverageBandPowers {
         IntByReference userID = null;
         boolean ready = false;
         int state = 0;
-PrintWriter writer = new PrintWriter("the-file-name.txt", "UTF-8");
+        PrintWriter writer = new PrintWriter("the-file-name.txt", "UTF-8");
         Edk.IEE_DataChannels_t dataChannel;
 
         userID = new IntByReference(0);
