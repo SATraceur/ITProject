@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package pcclient;
+package BCILED;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,21 +16,63 @@ import com.sun.jna.ptr.*;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Structure;
 
+/**
+ *
+ * @author yeqin
+ */
 public interface Edk extends Library {
 
+    /**
+     *
+     */
     Edk INSTANCE = (Edk) Native.loadLibrary("edk", Edk.class);
 
+    /**
+     *
+     */
     public enum IEE_FacialExpressionThreshold_t {
+
+        /**
+         *
+         */
         FE_SENSITIVITY
     };
 
     // ! FacialExpression Suite training control enumerator
+
+    /**
+     *
+     */
     public enum IEE_FacialExpressionTrainingControl_t {
+
+        /**
+         *
+         */
         FE_NONE(0),
+
+        /**
+         *
+         */
         FE_START(1),
+
+        /**
+         *
+         */
         FE_ACCEPT(2),
+
+        /**
+         *
+         */
         FE_REJECT(3),
+
+        /**
+         *
+         */
         FE_ERASE(4),
+
+        /**
+         *
+         */
         FE_RESET(5);
         private int type;
 
@@ -38,23 +80,68 @@ public interface Edk extends Library {
             type = val;
         }
 
+        /**
+         *
+         * @return
+         */
         public int toInt() {
             return type;
         }
     }
 
     // ! FacialExpression Suite signature type enumerator
+
+    /**
+     *
+     */
     public enum IEE_FacialExpressionSignature_t {
-        FE_SIG_UNIVERSAL, FE_SIG_TRAINED
+
+        /**
+         *
+         */
+        FE_SIG_UNIVERSAL,
+
+        /**
+         *
+         */
+        FE_SIG_TRAINED
     }
 
     // ! MentalCommand Suite training control enumerator
+
+    /**
+     *
+     */
     public enum IEE_MentalCommandTrainingControl_t {
+
+        /**
+         *
+         */
         MC_NONE(0),
+
+        /**
+         *
+         */
         MC_START(1),
+
+        /**
+         *
+         */
         MC_ACCEPT(2),
+
+        /**
+         *
+         */
         MC_REJECT(3),
+
+        /**
+         *
+         */
         MC_ERASE(4),
+
+        /**
+         *
+         */
         MC_RESET(5);
 
         private int type;
@@ -63,6 +150,10 @@ public interface Edk extends Library {
             type = val;
         }
 
+        /**
+         *
+         * @return
+         */
         public int getType() {
             return type;
         }
@@ -70,10 +161,30 @@ public interface Edk extends Library {
 
     // ! MentalCommand Suite level enumerator
     // @@ This constant has been obsoleted
+
+    /**
+     *
+     */
     public enum IEE_MentalCommandLevel_t {
+
+        /**
+         *
+         */
         MC_LEVEL1(0),
+
+        /**
+         *
+         */
         MC_LEVEL2(1),
+
+        /**
+         *
+         */
         MC_LEVEL3(2),
+
+        /**
+         *
+         */
         MC_LEVEL4(3);
 
         private int level;
@@ -82,23 +193,75 @@ public interface Edk extends Library {
             level = val;
         }
 
+        /**
+         *
+         * @return
+         */
         public int toInt() {
             return level;
         }
     }
 
     // ! EmoEngine event types
+
+    /**
+     *
+     */
     public enum IEE_Event_t {
+
+        /**
+         *
+         */
         IEE_UnknownEvent(0x0000),
+
+        /**
+         *
+         */
         IEE_EmulatorError(0x0001),
+
+        /**
+         *
+         */
         IEE_ReservedEvent(0x0002),
+
+        /**
+         *
+         */
         IEE_UserAdded(0x0010),
+
+        /**
+         *
+         */
         IEE_UserRemoved(0x0020),
+
+        /**
+         *
+         */
         IEE_EmoStateUpdated(0x0040),
+
+        /**
+         *
+         */
         IEE_ProfileEvent(0x0080),
+
+        /**
+         *
+         */
         IEE_MentalCommandEvent(0x0100),
+
+        /**
+         *
+         */
         IEE_FacialExpressionEvent(0x0200),
+
+        /**
+         *
+         */
         IEE_InternalStateChanged(0x0400),
+
+        /**
+         *
+         */
         IEE_AllEvent(0x07F0);
 
         private int bit;
@@ -107,34 +270,118 @@ public interface Edk extends Library {
             bit = bitNumber;
         }
 
+        /**
+         *
+         * @return
+         */
         public int ToInt() {
             return (bit);
         }
     }
 
     // ! FacialExpression-specific event types
+
+    /**
+     *
+     */
     public enum IEE_FacialExpressionEvent_t {
+
+        /**
+         *
+         */
         IEE_FacialExpressionNoEvent,
+
+        /**
+         *
+         */
         IEE_FacialExpressionTrainingStarted,
+
+        /**
+         *
+         */
         IEE_FacialExpressionTrainingSucceeded,
+
+        /**
+         *
+         */
         IEE_FacialExpressionTrainingFailed,
+
+        /**
+         *
+         */
         IEE_FacialExpressionTrainingCompleted,
+
+        /**
+         *
+         */
         IEE_FacialExpressionTrainingDataErased,
+
+        /**
+         *
+         */
         IEE_FacialExpressionTrainingRejected,
+
+        /**
+         *
+         */
         IEE_FacialExpressionTrainingReset
     }
 
     // ! MentalCommand-specific event types
+
+    /**
+     *
+     */
     public enum IEE_MentalCommandEvent_t {
+
+        /**
+         *
+         */
         IEE_MentalCommandNoEvent(0),
+
+        /**
+         *
+         */
         IEE_MentalCommandTrainingStarted(1),
+
+        /**
+         *
+         */
         IEE_MentalCommandTrainingSucceeded(2),
+
+        /**
+         *
+         */
         IEE_MentalCommandTrainingFailed(3),
+
+        /**
+         *
+         */
         IEE_MentalCommandTrainingCompleted(4),
+
+        /**
+         *
+         */
         IEE_MentalCommandTrainingDataErased(5),
+
+        /**
+         *
+         */
         IEE_MentalCommandTrainingRejected(6),
+
+        /**
+         *
+         */
         IEE_MentalCommandTrainingReset(7),
+
+        /**
+         *
+         */
         IEE_MentalCommandAutoSamplingNeutralCompleted(8),
+
+        /**
+         *
+         */
         IEE_MentalCommandSignatureUpdated(9);
 
         private int cType;
@@ -143,38 +390,153 @@ public interface Edk extends Library {
             cType = val;
         }
 
+        /**
+         *
+         * @return
+         */
         public int getType() {
             return cType;
         }
     }
 
+    /**
+     *
+     */
     public enum IEE_DataChannels_t {
+
+        /**
+         *
+         */
         IED_COUNTER(0), //!< Sample counter
+
+        /**
+         *
+         */
         IED_INTERPOLATED(1), //!< Indicate if data is interpolated
+
+        /**
+         *
+         */
         IED_RAW_CQ(2), //!< Raw contact quality value
+
+        /**
+         *
+         */
         IED_AF3(3), //!< Channel AF3
+
+        /**
+         *
+         */
         IED_F7(4), //!< Channel F7
+
+        /**
+         *
+         */
         IED_F3(5), //!< Channel F3
+
+        /**
+         *
+         */
         IED_FC5(6), //!< Channel FC5
+
+        /**
+         *
+         */
         IED_T7(7), //!< Channel T7
+
+        /**
+         *
+         */
         IED_P7(8), //!< Channel P7
+
+        /**
+         *
+         */
         IED_Pz(9), //!< Channel Pz
+
+        /**
+         *
+         */
         IED_O1(9), //!< Channel O1 = Pz
+
+        /**
+         *
+         */
         IED_O2(10), //!< Channel O2
+
+        /**
+         *
+         */
         IED_P8(11), //!< Channel P8
+
+        /**
+         *
+         */
         IED_T8(12), //!< Channel T8
+
+        /**
+         *
+         */
         IED_FC6(13), //!< Channel FC6
+
+        /**
+         *
+         */
         IED_F4(14), //!< Channel F4
+
+        /**
+         *
+         */
         IED_F8(15), //!< Channel F8
+
+        /**
+         *
+         */
         IED_AF4(16), //!< Channel AF4
+
+        /**
+         *
+         */
         IED_GYROX(17), //!< Gyroscope X-axis
+
+        /**
+         *
+         */
         IED_GYROY(18), //!< Gyroscope Y-axis
+
+        /**
+         *
+         */
         IED_TIMESTAMP(19), //!< System timestamp
+
+        /**
+         *
+         */
         IED_MARKER_HARDWARE(20), //!< Marker from extender
+
+        /**
+         *
+         */
         IED_ES_TIMESTAMP(21), //!< EmoState timestamp
+
+        /**
+         *
+         */
         IED_FUNC_ID(22), //!< Reserved function id
+
+        /**
+         *
+         */
         IED_FUNC_VALUE(23), //!< Reserved function value
+
+        /**
+         *
+         */
         IED_MARKER(24), //!< Marker value from hardware
+
+        /**
+         *
+         */
         IED_SYNC_SIGNAL(25);       //!< Synchronisation signal
 
         private int cType;
@@ -183,26 +545,81 @@ public interface Edk extends Library {
             cType = val;
         }
 
+        /**
+         *
+         * @return
+         */
         public int getType() {
             return cType;
         }
     }
 
+    /**
+     *
+     */
     public enum IEE_MotionDataChannel_t {
+
+        /**
+         *
+         */
         IMD_COUNTER, //!< Sample counter
+
+        /**
+         *
+         */
         IMD_GYROX, //!< Gyroscope X-axis
+
+        /**
+         *
+         */
         IMD_GYROY, //!< Gyroscope Y-axis
+
+        /**
+         *
+         */
         IMD_GYROZ, //!< Gyroscope Z-axis
+
+        /**
+         *
+         */
         IMD_ACCX, //!< Accelerometer X-axis
+
+        /**
+         *
+         */
         IMD_ACCY, //!< Accelerometer Y-axis
+
+        /**
+         *
+         */
         IMD_ACCZ, //!< Accelerometer Z-axis
+
+        /**
+         *
+         */
         IMD_MAGX, //!< Magnetometer X-axis
+
+        /**
+         *
+         */
         IMD_MAGY, //!< Magnetometer Y-axis
+
+        /**
+         *
+         */
         IMD_MAGZ, //!< Magnetometer Z-axis
+
+        /**
+         *
+         */
         IMD_TIMESTAMP;          //!< Timestamp of the motion data stream
     };
 
     // ! Input sensor description
+
+    /**
+     *
+     */
     public static class InputSensorDescriptor_t extends Structure {
 
         EmoState.IEE_InputChannels_t channelId; // logical channel id
@@ -212,6 +629,10 @@ public interface Edk extends Library {
         double yLoc;     // y coordinate from center of head towards ears
         double zLoc;     // z coordinate from center of head toward top of skull
 
+        /**
+         *
+         * @return
+         */
         @Override
         protected List getFieldOrder() {
             // TODO Auto-generated method stub
@@ -219,9 +640,24 @@ public interface Edk extends Library {
         }
     }
 
+    /**
+     *
+     */
     public enum IEE_LicenseType_t {
+
+        /**
+         *
+         */
         IEE_EEG(1), // Enable EEG data
+
+        /**
+         *
+         */
         IEE_PM(2), // Enable Performance Metric detection   
+
+        /**
+         *
+         */
         IEE_EEG_PM(3);   // Enable EEG data and Performance Metric detection  
 
         private int cType;
@@ -230,28 +666,73 @@ public interface Edk extends Library {
             cType = val;
         }
 
+        /**
+         *
+         * @return
+         */
         public int getType() {
             return cType;
         }
     }
 
+    /**
+     *
+     */
     public static class LicenseInfos_t extends Structure {
 
+        /**
+         *
+         */
         public static class ByReference extends LicenseInfos_t implements Structure.ByReference {
         }
 
+        /**
+         *
+         */
         public int scopes;            // license type
+
+        /**
+         *
+         */
         public int date_from;         // epoch time  //maximum date : 07 Feb 2106
+
+        /**
+         *
+         */
         public int date_to;           // epoch time
+
+        /**
+         *
+         */
         public int soft_limit_date;   // need authorize the license, then your current quota will be reset to the debit number
         // if not, you can still use current quota to hard_limit_date
 
+        /**
+         *
+         */
         public int hard_limit_date;  // After this date. Your current quota will be reset to 0 and stop using the library
+
+        /**
+         *
+         */
         public int seat_count;       // number of seat
+
+        /**
+         *
+         */
         public int usedQuota;        // total session used
+
+        /**
+         *
+         */
         public int quota;            // total session in the license
 
         //@Override
+
+        /**
+         *
+         * @return
+         */
         @Override
         protected List<String> getFieldOrder() {
             // TODO Auto-generated method stub
@@ -260,17 +741,43 @@ public interface Edk extends Library {
         }
     }
 
+    /**
+     *
+     */
     public static class DebitInfos_t extends Structure {
 
+        /**
+         *
+         */
         public static class ByReference extends DebitInfos_t implements Structure.ByReference {
         }
 
+        /**
+         *
+         */
         public int remainingSessions; 	// remaining session number of the license
+
+        /**
+         *
+         */
         public int daily_debit_limit; 	// the max of session debit number per day
+
+        /**
+         *
+         */
         public int total_debit_today; 	// the number of session debited today
+
+        /**
+         *
+         */
         public int time_reset;   		// time to reset daily debit (seconds)
 
         //@Override
+
+        /**
+         *
+         * @return
+         */
         @Override
         protected List<String> getFieldOrder() {
             // TODO Auto-generated method stub
@@ -286,6 +793,14 @@ public interface Edk extends Library {
      *            EDK_OK
      * \sa IedkErrorCode.h
      */
+
+    /**
+     *
+     * @param licenseID
+     * @param debitInfo
+     * @return
+     */
+
     public int IEE_GetDebitInformation(String licenseID, DebitInfos_t.ByReference debitInfo);
 
     //! Check infos of the license
@@ -302,6 +817,13 @@ public interface Edk extends Library {
      *            EDK_OK
      * \sa IedkErrorCode.h
      */
+
+    /**
+     *
+     * @param licenseInfo
+     * @return
+     */
+
     public int IEE_LicenseInformation(LicenseInfos_t.ByReference licenseInfo);
 
     //! Authorize a license with a session debit number
@@ -314,6 +836,14 @@ public interface Edk extends Library {
 
         \sa IedkErrorCode.h
      */
+
+    /**
+     *
+     * @param licenseID
+     * @param debitNum
+     * @return
+     */
+
     int IEE_AuthorizeLicense(String licenseID, int debitNum);
 
     // ! Initializes the connection to EmoEngine. This function should be called
@@ -325,6 +855,13 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param strDevID
+     * @return
+     */
+
     int IEE_EngineConnect(String strDevID);
 
     // ! Initializes the connection to a remote instance of EmoEngine.
@@ -341,6 +878,15 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param szHost
+     * @param port
+     * @param strDevID
+     * @return
+     */
+
     int IEE_EngineRemoteConnect(String szHost, short port, String strDevID);
 
     // ! Terminates the connection to EmoEngine. This function should be called
@@ -352,6 +898,12 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @return
+     */
+
     int IEE_EngineDisconnect();
 
     // ! Controls the output of logging information from EmoEngine (which is off
@@ -365,6 +917,15 @@ public interface Edk extends Library {
 	 * 
 	 * \return EDK_ERROR_CODE - EDK_ERROR_CODEEDK_OK if the command succeeded
      */
+
+    /**
+     *
+     * @param szFilename
+     * @param fEnable
+     * @param nReserved
+     * @return
+     */
+
     int IEE_EnableDiagnostics(String szFilename, int fEnable, int nReserved);
 
     // ! Returns a handle to memory that can hold an EmoEngine event. This
@@ -372,6 +933,12 @@ public interface Edk extends Library {
     /*
 	 * ! \return Pointer
      */
+
+    /**
+     *
+     * @return
+     */
+
     Pointer IEE_EmoEngineEventCreate();
 
     // ! Frees memory referenced by an event handle.
@@ -379,6 +946,12 @@ public interface Edk extends Library {
 	 * ! \param hEvent - a handle returned by IEE_EmoEngineEventCreate() or
 	 * IEE_ProfileEventCreate()
      */
+
+    /**
+     *
+     * @param hEvent
+     */
+
     void IEE_EmoEngineEventFree(Pointer hEvent);
 
     // ! Returns a handle to memory that can store an EmoState. This handle can
@@ -386,12 +959,24 @@ public interface Edk extends Library {
     /*
 	 * ! \return Pointer
      */
+
+    /**
+     *
+     * @return
+     */
+
     Pointer IEE_EmoStateCreate();
 
     // ! Frees memory referenced by an EmoState handle.
     /*
 	 * ! \param hState - a handle returned by IEE_EmoStateCreate()
      */
+
+    /**
+     *
+     * @param hState
+     */
+
     void IEE_EmoStateFree(Pointer hState);
 
     // ! Returns the event type for an event already retrieved using
@@ -401,6 +986,13 @@ public interface Edk extends Library {
 	 * 
 	 * \return int
      */
+
+    /**
+     *
+     * @param hEvent
+     * @return
+     */
+
     int IEE_EmoEngineEventGetType(Pointer hEvent);
 
     // ! Returns the MentalCommand-specific event type for an
@@ -411,6 +1003,13 @@ public interface Edk extends Library {
 	 * 
 	 * \return int
      */
+
+    /**
+     *
+     * @param hEvent
+     * @return
+     */
+
     int IEE_MentalCommandEventGetType(Pointer hEvent);
 
     // ! Returns the FacialExpression-specific event type for an
@@ -421,6 +1020,13 @@ public interface Edk extends Library {
 	 * 
 	 * \return int
      */
+
+    /**
+     *
+     * @param hEvent
+     * @return
+     */
+
     int IEE_FacialExpressionEventGetType(Pointer hEvent);
 
     // ! Retrieves the user ID for IEE_UserAdded and IEE_UserRemoved events.
@@ -432,6 +1038,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param hEvent
+     * @param pUserIdOut
+     * @return
+     */
+
     int IEE_EmoEngineEventGetUserId(Pointer hEvent, IntByReference pUserIdOut);
 
     // ! Copies an EmoState returned with a IEE_EmoStateUpdate event to memory
@@ -445,6 +1059,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param hEvent
+     * @param hEmoState
+     * @return
+     */
+
     int IEE_EmoEngineEventGetEmoState(Pointer hEvent, Pointer hEmoState);
 
     // ! Retrieves the next EmoEngine event
@@ -459,6 +1081,13 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param hEvent
+     * @return
+     */
+
     int IEE_EngineGetNextEvent(Pointer hEvent);
 
     // ! Clear a specific EmoEngine event type or all events currently inside
@@ -474,6 +1103,13 @@ public interface Edk extends Library {
 	 * 
 	 * \sa int, edkErrorCode.h
      */
+
+    /**
+     *
+     * @param eventTypes
+     * @return
+     */
+
     int IEE_EngineClearEventQueue(int eventTypes);
 
     // ! Retrieves number of active users connected to the EmoEngine.
@@ -484,6 +1120,13 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param pNumUserOut
+     * @return
+     */
+
     int IEE_EngineGetNumUser(IntByReference pNumUserOut);
 
     // ! Sets the player number displayed on the physical input device
@@ -495,6 +1138,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param userId
+     * @param playerNum
+     * @return
+     */
+
     int IEE_SetHardwarePlayerDisplay(int userId, int playerNum);
 
     // ! Set threshold for FacialExpression algorithms
@@ -507,6 +1158,16 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h, int, int
      */
+
+    /**
+     *
+     * @param userId
+     * @param algoName
+     * @param thresholdName
+     * @param value
+     * @return
+     */
+
     int IEE_FacialExpressionSetThreshold(int userId, int algoName,
             int thresholdName, int value);
 
@@ -520,6 +1181,16 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h, int, int
      */
+
+    /**
+     *
+     * @param userId
+     * @param algoName
+     * @param thresholdName
+     * @param pValueOut
+     * @return
+     */
+
     int IEE_FacialExpressionGetThreshold(int userId, int algoName,
             int thresholdName, IntByReference pValueOut);
 
@@ -535,6 +1206,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h, int
      */
+
+    /**
+     *
+     * @param userId
+     * @param action
+     * @return
+     */
+
     int IEE_FacialExpressionSetTrainingAction(int userId, int action);
 
     // ! Set the control flag for FacialExpression training
@@ -548,6 +1227,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h, int
      */
+
+    /**
+     *
+     * @param userId
+     * @param control
+     * @return
+     */
+
     int IEE_FacialExpressionSetTrainingControl(int userId, int control);
 
     // ! Gets the facial expression currently selected for FacialExpression
@@ -563,6 +1250,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa EDK_ERROR_CODE, int
      */
+
+    /**
+     *
+     * @param userId
+     * @param pActionOut
+     * @return
+     */
+
     int IEE_FacialExpressionGetTrainingAction(int userId,
             IntByReference pActionOut);
 
@@ -575,6 +1270,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param userId
+     * @param pTrainingTimeOut
+     * @return
+     */
+
     int IEE_FacialExpressionGetTrainingTime(int userId,
             IntByReference pTrainingTimeOut);
 
@@ -590,6 +1293,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa EDK_ERROR_CODE, int
      */
+
+    /**
+     *
+     * @param userId
+     * @param pTrainedActionsOut
+     * @return
+     */
+
     int IEE_FacialExpressionGetTrainedSignatureActions(int userId,
             NativeLongByReference pTrainedActionsOut);
 
@@ -610,6 +1321,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa EDK_ERROR_CODE
      */
+
+    /**
+     *
+     * @param userId
+     * @param pfAvailableOut
+     * @return
+     */
+
     int IEE_FacialExpressionGetTrainedSignatureAvailable(int userId,
             IntByReference pfAvailableOut);
 
@@ -629,6 +1348,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa EDK_ERROR_CODE, int
      */
+
+    /**
+     *
+     * @param userId
+     * @param sigType
+     * @return
+     */
+
     int IEE_FacialExpressionSetSignatureType(int userId, int sigType);
 
     // ! Indicates whether the FacialExpression suite is currently using either
@@ -644,6 +1371,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa EDK_ERROR_CODE, int
      */
+
+    /**
+     *
+     * @param userId
+     * @param pSigTypeOut
+     * @return
+     */
+
     int IEE_FacialExpressionGetSignatureType(int userId,
             IntByReference pSigTypeOut);
 
@@ -661,6 +1396,18 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h, int, int
      */
+
+    /**
+     *
+     * @param userId
+     * @param level
+     * @param level1Action
+     * @param level2Action
+     * @param level3Action
+     * @param level4Action
+     * @return
+     */
+
     int IEE_MentalCommandSetCurrentLevel(int userId, int level,
             int level1Action, int level2Action, int level3Action,
             int level4Action);
@@ -676,6 +1423,18 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h, int, int
      */
+
+    /**
+     *
+     * @param userId
+     * @param pLevelOut
+     * @param pLevel1ActionOut
+     * @param pLevel2ActionOut
+     * @param pLevel3ActionOut
+     * @param pLevel4ActionOut
+     * @return
+     */
+
     int IEE_MentalCommandGetCurrentLevel(int userId, IntByReference pLevelOut,
             IntByReference pLevel1ActionOut, IntByReference pLevel2ActionOut,
             IntByReference pLevel3ActionOut, IntByReference pLevel4ActionOut);
@@ -691,6 +1450,13 @@ public interface Edk extends Library {
      */
     // int
     // IEE_MentalCommandSetActiveActions(int userId, NativeLong activeActions);
+
+    /**
+     *
+     * @param userId
+     * @param activeActions
+     * @return
+     */
     int IEE_MentalCommandSetActiveActions(int userId, long activeActions);
 
     // ! Get the current MentalCommand active action types
@@ -702,6 +1468,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h, int
      */
+
+    /**
+     *
+     * @param userId
+     * @param pActiveActionsOut
+     * @return
+     */
+
     int IEE_MentalCommandGetActiveActions(int userId,
             NativeLongByReference pActiveActionsOut);
 
@@ -714,6 +1488,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param userId
+     * @param pTrainingTimeOut
+     * @return
+     */
+
     int IEE_MentalCommandGetTrainingTime(int userId,
             IntByReference pTrainingTimeOut);
 
@@ -726,6 +1508,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h, int
      */
+
+    /**
+     *
+     * @param userId
+     * @param control
+     * @return
+     */
+
     int IEE_MentalCommandSetTrainingControl(int userId, int control);
 
     // ! Set the type of MentalCommand action to be trained
@@ -737,6 +1527,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h, int
      */
+
+    /**
+     *
+     * @param userId
+     * @param action
+     * @return
+     */
+
     int IEE_MentalCommandSetTrainingAction(int userId, int action);
 
     // ! Get the type of MentalCommand action currently selected for training
@@ -748,6 +1546,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h, int
      */
+
+    /**
+     *
+     * @param userId
+     * @param pActionOut
+     * @return
+     */
+
     int IEE_MentalCommandGetTrainingAction(int userId, IntByReference pActionOut);
 
     // ! Gets a list of the MentalCommand actions that have been trained by the
@@ -762,6 +1568,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h, int
      */
+
+    /**
+     *
+     * @param userId
+     * @param pTrainedActionsOut
+     * @return
+     */
+
     int IEE_MentalCommandGetTrainedSignatureActions(int userId,
             NativeLongByReference pTrainedActionsOut);
 
@@ -776,6 +1590,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param userId
+     * @param pOverallSkillRatingOut
+     * @return
+     */
+
     int IEE_MentalCommandGetOverallSkillRating(int userId,
             FloatByReference pOverallSkillRatingOut);
 
@@ -792,6 +1614,15 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h, int
      */
+
+    /**
+     *
+     * @param userId
+     * @param action
+     * @param pActionSkillRatingOut
+     * @return
+     */
+
     int IEE_MentalCommandGetActionSkillRating(int userId, int action,
             FloatByReference pActionSkillRatingOut);
 
@@ -804,6 +1635,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param userId
+     * @param level
+     * @return
+     */
+
     int IEE_MentalCommandSetActivationLevel(int userId, int level);
 
     // ! Set the sensitivity of MentalCommand actions
@@ -818,6 +1657,17 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param userId
+     * @param action1Sensitivity
+     * @param action2Sensitivity
+     * @param action3Sensitivity
+     * @param action4Sensitivity
+     * @return
+     */
+
     int IEE_MentalCommandSetActionSensitivity(int userId,
             int action1Sensitivity, int action2Sensitivity,
             int action3Sensitivity, int action4Sensitivity);
@@ -831,6 +1681,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param userId
+     * @param pLevelOut
+     * @return
+     */
+
     int IEE_MentalCommandGetActivationLevel(int userId, IntByReference pLevelOut);
 
     // ! Query the sensitivity of MentalCommand actions
@@ -844,6 +1702,17 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param userId
+     * @param pAction1SensitivityOut
+     * @param pAction2SensitivityOut
+     * @param pAction3SensitivityOut
+     * @param pAction4SensitivityOut
+     * @return
+     */
+
     int IEE_MentalCommandGetActionSensitivity(int userId,
             IntByReference pAction1SensitivityOut,
             IntByReference pAction2SensitivityOut,
@@ -858,6 +1727,13 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param userId
+     * @return
+     */
+
     int IEE_MentalCommandStartSamplingNeutral(int userId);
 
     // ! Stop the sampling of Neutral state in MentalCommand
@@ -868,6 +1744,13 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param userId
+     * @return
+     */
+
     int IEE_MentalCommandStopSamplingNeutral(int userId);
 
     // ! Enable or disable signature caching in MentalCommand
@@ -879,6 +1762,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param userId
+     * @param enabled
+     * @return
+     */
+
     int IEE_MentalCommandSetSignatureCaching(int userId, int enabled);
 
     // ! Query the status of signature caching in MentalCommand
@@ -890,6 +1781,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param userId
+     * @param pEnabledOut
+     * @return
+     */
+
     int IEE_MentalCommandGetSignatureCaching(int userId,
             IntByReference pEnabledOut);
 
@@ -902,6 +1801,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param userId
+     * @param size
+     * @return
+     */
+
     int IEE_MentalCommandSetSignatureCacheSize(int userId, int size);
 
     // ! Get the current cache size for the signature caching in MentalCommand
@@ -913,6 +1820,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param userId
+     * @param pSizeOut
+     * @return
+     */
+
     int IEE_MentalCommandGetSignatureCacheSize(int userId,
             IntByReference pSizeOut);
 
@@ -926,6 +1841,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa EmoStateDll.h, edkErrorCode.h
      */
+
+    /**
+     *
+     * @param channelId
+     * @param pDescriptorOut
+     * @return
+     */
+
     int IEE_HeadsetGetSensorDetails(int channelId,
             InputSensorDescriptor_t pDescriptorOut);
 
@@ -940,6 +1863,14 @@ public interface Edk extends Library {
 	 * 
 	 * \sa EmoStateDll.h, edkErrorCode.h
      */
+
+    /**
+     *
+     * @param userId
+     * @param pHwVersionOut
+     * @return
+     */
+
     int IEE_HardwareGetVersion(int userId, NativeLongByReference pHwVersionOut);
 
     // ! Returns the current version of the Emotiv SDK software
@@ -953,6 +1884,15 @@ public interface Edk extends Library {
 	 * 
 	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param pszVersionOut
+     * @param nVersionChars
+     * @param pBuildNumOut
+     * @return
+     */
+
     int IEE_SoftwareGetVersion(String pszVersionOut, int nVersionChars,
             NativeLongByReference pBuildNumOut);
 
@@ -966,6 +1906,15 @@ public interface Edk extends Library {
 	 * 
 	 * \sa EmoStateDll.h \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param userId
+     * @param pXOut
+     * @param pYOut
+     * @return
+     */
+
     int IEE_HeadsetGetGyroDelta(int userId, IntByReference pXOut,
             IntByReference pYOut);
 
@@ -977,6 +1926,13 @@ public interface Edk extends Library {
 	 * 
 	 * \sa EmoStateDll.h \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param userId
+     * @return
+     */
+
     int IEE_HeadsetGyroRezero(int userId);
 
     //! Get headset settings from EPOC+ headset
@@ -1001,6 +1957,18 @@ public interface Edk extends Library {
 	 *  \return EDK_ERROR_CODE
 	 *                      - EDK_ERROR_CODE = EDK_OK if the command successful
      */
+
+    /**
+     *
+     * @param userId
+     * @param EPOCmode
+     * @param eegRate
+     * @param eegRes
+     * @param memsRate
+     * @param memsRes
+     * @return
+     */
+
     int IEE_GetHeadsetSettings(int userId, IntByReference EPOCmode, IntByReference eegRate, IntByReference eegRes, IntByReference memsRate, IntByReference memsRes);
 
     //! Set headset setting for EPOC+ headset
@@ -1022,6 +1990,18 @@ public interface Edk extends Library {
 	 *  \return EDK_ERROR_CODE 
 	 *                      - EDK_ERROR_CODE = EDK_OK if the command successful
      */
+
+    /**
+     *
+     * @param userId
+     * @param EPOCmode
+     * @param eegRate
+     * @param eegRes
+     * @param memsRate
+     * @param memsRes
+     * @return
+     */
+
     int IEE_SetHeadsetSettings(int userId, int EPOCmode, int eegRate, int eegRes, int memsRate, int memsRes);
 
     //! Return a handle to memory that can hold motion data.
@@ -1029,12 +2009,24 @@ public interface Edk extends Library {
     /*!
      * \return DataHandle
      */
+
+    /**
+     *
+     * @return
+     */
+
     Pointer IEE_MotionDataCreate();
 
     //! Free memory referenced by a data handle.
     /*!
      *  \param hData - a handle returned by IEE_MotionDataCreate()
      */
+
+    /**
+     *
+     * @param hData
+     */
+
     void IEE_MotionDataFree(Pointer hData);
 
     //! Update the content of the data handle to point to new data since the last call
@@ -1044,6 +2036,14 @@ public interface Edk extends Library {
      *  \return EDK_ERROR_CODE
      *                - EDK_OK if successful
      */
+
+    /**
+     *
+     * @param userId
+     * @param hData
+     * @return
+     */
+
     int IEE_MotionDataUpdateHandle(int userId, Pointer hData);
 
     //! Extract data of a particular channel from the data handle
@@ -1055,6 +2055,16 @@ public interface Edk extends Library {
      *  \return EDK_ERROR_CODE
      *                 - EDK_OK if successful
      */
+
+    /**
+     *
+     * @param hData
+     * @param channel
+     * @param buffer
+     * @param bufferSizeInSample
+     * @return
+     */
+
     int IEE_MotionDataGet(Pointer hData, int channel, double[] buffer,
             int bufferSizeInSample);
 
@@ -1068,6 +2078,17 @@ public interface Edk extends Library {
      *  \return EDK_ERROR_CODE
      *                  - EDK_OK if successful
      */
+
+    /**
+     *
+     * @param hData
+     * @param channels
+     * @param nChannels
+     * @param buffer
+     * @param bufferSizeInSample
+     * @return
+     */
+
     int IEE_MotionDataGetMultiChannels(Pointer hData, int[] channels, int nChannels,
             DoubleByReference[] buffer, int bufferSizeInSample);
 
@@ -1078,6 +2099,14 @@ public interface Edk extends Library {
      *  \return EDK_ERROR_CODE
      *                 - EDK_OK if successful
      */
+
+    /**
+     *
+     * @param hData
+     * @param nSampleOut
+     * @return
+     */
+
     int IEE_MotionDataGetNumberOfSample(Pointer hData, IntByReference nSampleOut);
 
     //! Set the size of the motion data buffer.
@@ -1087,6 +2116,13 @@ public interface Edk extends Library {
      *   \return EDK_ERROR_CODE
      *                 - EDK_OK if successful
      */
+
+    /**
+     *
+     * @param bufferSizeInSec
+     * @return
+     */
+
     int IEE_MotionDataSetBufferSizeInSec(float bufferSizeInSec);
 
     //! Return the size of the motion data buffer
@@ -1095,6 +2131,13 @@ public interface Edk extends Library {
      *  \return EDK_ERROR_CODE
      *                 - EDK_OK if successful
      */
+
+    /**
+     *
+     * @param pBufferSizeInSecOut
+     * @return
+     */
+
     int IEE_MotionDataGetBufferSizeInSec(FloatByReference pBufferSizeInSecOut);
 
     //! Get sampling rate of the motion data stream
@@ -1104,6 +2147,14 @@ public interface Edk extends Library {
      *  \return EDK_ERROR_CODE
      *                 - EDK_OK if successful
      */
+
+    /**
+     *
+     * @param userId
+     * @param samplingRateOut
+     * @return
+     */
+
     int IEE_MotionDataGetSamplingRate(int userId, IntByReference samplingRateOut);
 
     //! Get averge band power values for a channel
@@ -1120,6 +2171,19 @@ public interface Edk extends Library {
      *  \return EDK_ERROR_CODE
      *                   - EDK_OK if successful
      */
+
+    /**
+     *
+     * @param userId
+     * @param channel
+     * @param theta
+     * @param alpha
+     * @param low_beta
+     * @param high_beta
+     * @param gamma
+     * @return
+     */
+
     int IEE_GetAverageBandPowers(int userId, int channel, DoubleByReference theta, DoubleByReference alpha, DoubleByReference low_beta,
             DoubleByReference high_beta, DoubleByReference gamma);
 
@@ -1130,6 +2194,14 @@ public interface Edk extends Library {
      *  \return EDK_ERROR_CODE
      *                   - EDK_OK if successful
      */
+
+    /**
+     *
+     * @param userId
+     * @param type
+     * @return
+     */
+
     int IEE_FFTSetWindowingType(int userId, int type);
 
     //! Get the current windowing type for band power calculation
@@ -1139,6 +2211,14 @@ public interface Edk extends Library {
      *  \return EDK_ERROR_CODE
      *                - EDK_OK if successful
      */
+
+    /**
+     *
+     * @param userId
+     * @param type
+     * @return
+     */
+
     int IEE_FFTGetWindowingType(int userId, IntByReference type);
 
     // ! Returns a handle to memory that can hold a profile byte stream. This
@@ -1146,6 +2226,12 @@ public interface Edk extends Library {
     /*
  	 * ! \return Pointer
      */
+
+    /**
+     *
+     * @return
+     */
+
     Pointer IEE_ProfileEventCreate();
 
     // ! Loads an EmoEngine profile for the specified user.
@@ -1159,6 +2245,15 @@ public interface Edk extends Library {
  	 * 
  	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param userId
+     * @param profileBuffer
+     * @param length
+     * @return
+     */
+
     int IEE_SetUserProfile(int userId, byte[] profileBuffer, int length);
 
     // ! Returns user profile data in a synchronous manner.
@@ -1173,6 +2268,14 @@ public interface Edk extends Library {
  	 * 
  	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param userId
+     * @param hEvent
+     * @return
+     */
+
     int IEE_GetUserProfile(int userId, Pointer hEvent);
 
     // ! Returns a serialized user profile for a default user in a synchronous
@@ -1187,6 +2290,13 @@ public interface Edk extends Library {
  	 * 
  	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param hEvent
+     * @return
+     */
+
     int IEE_GetBaseProfile(Pointer hEvent);
 
     // ! Returns the number of bytes required to store a serialized version of
@@ -1199,6 +2309,14 @@ public interface Edk extends Library {
  	 * 
  	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param hEvt
+     * @param pProfileSizeOut
+     * @return
+     */
+
     int IEE_GetUserProfileSize(Pointer hEvt, IntByReference pProfileSizeOut);
 
     // ! Copies a serialized version of the requested user profile into the
@@ -1212,6 +2330,15 @@ public interface Edk extends Library {
  	 * 
  	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param hEvt
+     * @param destBuffer
+     * @param length
+     * @return
+     */
+
     int IEE_GetUserProfileBytes(Pointer hEvt, byte[] destBuffer, int length);
 
     // ! Loads a user profile from disk and assigns it to the specified user
@@ -1223,6 +2350,14 @@ public interface Edk extends Library {
  	 * 
  	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param userID
+     * @param szInputFilename
+     * @return
+     */
+
     int IEE_LoadUserProfile(int userID, String szInputFilename);
 
     // ! Saves a user profile for specified user to disk
@@ -1234,5 +2369,13 @@ public interface Edk extends Library {
  	 * 
  	 * \sa edkErrorCode.h
      */
+
+    /**
+     *
+     * @param userID
+     * @param szOutputFilename
+     * @return
+     */
+
     int IEE_SaveUserProfile(int userID, String szOutputFilename);
 }
