@@ -25,21 +25,43 @@ import javax.swing.JFrame;
 public class BCILED {
 
     /**
-     * @param args the command line arguments
-     * @throws java.lang.Exception
+     * build the heatMap display window
+     * @return
      */
-    public static void main(String args[]) throws Exception {
-
-        // Heatmap GUI related stuff
+    public static Panel setWindowns() {
+        System.out.println("Please Enter X and Y cell size (Integer Value): ");
+        Scanner s = new Scanner(System.in);
+        int x = s.nextInt();
+        int y = s.nextInt();
+        s.close();
         JFrame window = new JFrame("HeatMap GUI");
         Panel panel = new Panel(100, 100); // heatmap dimensions
-        panel.setCellSize(new Dimension(5, 5)); // heatmap cell size
+        panel.setCellSize(new Dimension(x, y)); // heatmap cell size
         window.setResizable(true);
         window.setLocationRelativeTo(null);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setSize(panel.getMapSize().width, panel.getMapSize().height);
         window.add(panel);
         window.setVisible(true);
+        return panel;
+    }
+
+    /**
+     *
+     */
+    public static void setHeadSet() {
+
+    }
+
+    /**
+     *
+     * @param args
+     * @throws Exception
+     */
+    public static void main(String args[]) throws Exception {
+
+        // Heatmap GUI related stuff
+        Panel panel = BCILED.setWindowns();
 
         // EEG headset related stuff
         Pointer eEvent = Edk.INSTANCE.IEE_EmoEngineEventCreate();
@@ -137,6 +159,7 @@ public class BCILED {
 
             // Generate random alphaValues for testing and store min/max for normalisation
             for (int i = 0; i < 14; i++) {
+
                 alphaValues[i] = rand.nextDouble() * 20;
                 if (alphaValues[i] > max) {
                     max = alphaValues[i];
@@ -161,19 +184,19 @@ public class BCILED {
         Edk.INSTANCE.IEE_EmoEngineEventFree(eEvent);
         System.out.println("Disconnected!");
         String address = "localhost";
-
+//using socket when only we cannot get it on the PI working properly 
         while (true) {
-            Socket s = new Socket(address, 5000);
+            Socket s1 = new Socket(address, 5000);
 
             String k;
             Scanner scanner = new Scanner(new File("d:\\test.txt"));
             k = scanner.next();
             System.out.print(k);
             scanner.close();
-            PrintWriter out = new PrintWriter(s.getOutputStream(), true);
+            PrintWriter out = new PrintWriter(s1.getOutputStream(), true);
             out.println(k);
             out.close();
-            s.close();
+            s1.close();
 
             Thread.sleep(10000);
         }
