@@ -108,8 +108,8 @@ public class HeatChart {
     }
 
     /**
-     *
-     * @return
+     * Returns dimension of heat chart
+     * @return chartSize  
      */
     public Dimension getChartSize() {
         return this.chartSize;
