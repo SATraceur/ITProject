@@ -36,7 +36,11 @@ public class BCILED {
         s.close();
         JFrame window = new JFrame("HeatMap GUI");
         Panel panel = new Panel(100, 100); // heatmap dimensions
+<<<<<<< Updated upstream:BrainLED/pcClient/src/BCILED/BCILED.java
         panel.setCellSize(new Dimension(x, y)); // heatmap cell size
+=======
+        panel.setCellSize(new Dimension(3,3)); // heatmap cell size
+>>>>>>> Stashed changes:BrainLED/pcClient/src/pcclient/PcClient.java
         window.setResizable(true);
         window.setLocationRelativeTo(null);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
