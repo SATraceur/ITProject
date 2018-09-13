@@ -46,15 +46,10 @@ public class BCILED {
         return panel;
     }
 
-    /**
-     *
-     */
-    public static void setHeadSet() {
 
-    }
 
     /**
-     *
+     * start the program
      * @param args
      * @throws Exception
      */
