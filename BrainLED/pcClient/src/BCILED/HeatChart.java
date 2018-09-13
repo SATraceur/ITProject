@@ -340,7 +340,7 @@ public class HeatChart {
 
     /**
      *
-     * @param p - point of which to find neighbouring sensors
+     * @param p - point of which to find neighboring sensors
      * @param matrix - matrix containing the sensor in question
      * @return LinkedList<MatrixObject>
      */
