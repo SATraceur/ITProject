@@ -26,7 +26,7 @@ import java.util.LinkedList;
 
 /**
  *
- * @author SATraceur
+ * @author yeqin
  */
 public class HeatChart {
 
@@ -38,16 +38,12 @@ public class HeatChart {
     private LinkedList<Point> matrixSensorLocations;
     // 2D array to hold all matrix objects containing point data and sensor status
     private MatrixObject[][] matrixObjects;
-    Color test = new Color(1,0,0.1f);
-    // LED Strip
-    LEDdriver LEDS = new LEDdriver();
-    
-    
+
     /**
-     * Constructor for HeatChart - initializes cell dimensions and adds sensors to the matrix.
-     * @param xDimension - Cell X dimension
-     * @param yDimension - Cell Y dimension
-     * @param sensorLocations - Array of points for sensor locations
+     *
+     * @param xDimension
+     * @param yDimension
+     * @param sensorLocations
      */
     public HeatChart(int xDimension, int yDimension, Point[] sensorLocations) {
 
@@ -64,15 +60,16 @@ public class HeatChart {
         for (Point p : sensorLocations) {
             matrixSensorLocations.add(new Point(p.x, p.y));
         }
-        System.out.println(test.getGreen());
-        System.out.println(test.getBlue());
+
         // Initilise matrix with default values of 0
         this.refreshMatrix();
     }
 
+    // Assign normalised dataset to individual sensors
+
     /**
-     * Sets sensor values to values specified within list provided by the user.
-     * @param values - Array of values to be assigned to the sensors.
+     *
+     * @param values
      */
     public void setSensorValues(double[] values) {
         int i = 0;
@@ -82,7 +79,7 @@ public class HeatChart {
     }
 
     /**
-     * Sets cell size within matrix to user specified dimensions.
+     *
      * @param cellSize
      */
     public void setCellSize(Dimension cellSize) {
@@ -90,31 +87,42 @@ public class HeatChart {
     }
 
     /**
-     * Calculates size of the image to be used based on matrix and cell dimensions then
-     * generates a chart and attaches the HeatMap image.
-     * @return chartImage - Image of HeatMap
+     *
+     * @return
      */
     public Image getChartImage() {
-        // Calculate size of chart.
+        // Calculate size of chart
         chartSize = new Dimension(matrixObjects.length * cellSize.width, matrixObjects[0].length * cellSize.height);
 
         // Create image which we will eventually draw everything on.
         BufferedImage chartImage = new BufferedImage(chartSize.width, chartSize.height, BufferedImage.TYPE_3BYTE_BGR);
         Graphics2D chartGraphics = chartImage.createGraphics();
-        
-        // Create the heatmap image.
-        BufferedImage heatMapImage = new BufferedImage(chartSize.width, chartSize.height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D heatMapGraphics = heatMapImage.createGraphics();
 
         // Use anti-aliasing where ever possible.
         chartGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // Draw each cell of the matrix onto the heat map image.
+        // Draw the heatmap image.
+        drawHeatMap(chartGraphics);
+
+        return chartImage;
+    }
+
+    /**
+     * Returns dimension of heat chart
+     * @return chartSize  
+     */
+    public Dimension getChartSize() {
+        return this.chartSize;
+    }
+
+    private void drawHeatMap(Graphics2D chartGraphics) {
+
+        BufferedImage heatMapImage = new BufferedImage(chartSize.width, chartSize.height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D heatMapGraphics = heatMapImage.createGraphics();
+
+        // Draw each cell of the matrix
         for (int x = 0; x < this.x; x++) {
             for (int y = 0; y < this.y; y++) {
-                // INSERT LED DRIVER CODE HERE
-                
-                
                 // Set colour depending on normalised MatrixObject values.
                 heatMapGraphics.setColor(getHeatMapColor((float) matrixObjects[x][y].value));
                 heatMapGraphics.fillRect(x * cellSize.width, y * cellSize.height, cellSize.width, cellSize.height);
@@ -123,24 +131,9 @@ public class HeatChart {
 
         // Draw the heat map onto the chart.
         chartGraphics.drawImage(heatMapImage, 0, 0, chartSize.width, chartSize.height, null);
-
-        return chartImage;
     }
 
-    /**
-     * Returns dimension of chart containing the HeatMap.
-     * @return chartSize  
-     */
-    public Dimension getChartSize() {
-        return this.chartSize;
-    }
-
-    /**
-     * Used code from: http://www.andrewnoske.com/wiki/Code_-_heatmaps_and_color_gradients
-     * Takes a value 
-     * @param value
-     * @return 
-     */
+    // Used code from: http://www.andrewnoske.com/wiki/Code_-_heatmaps_and_color_gradients
     private Color getHeatMapColor(float value) {
 
         float color[][] = {
