@@ -325,8 +325,8 @@ public class HeatChart {
     }
 
     /**
-     *
-     * @return
+     * Returns a 2D matrix containing the matrixObjects
+     * @return matrixData
      */
     public double[][] returnData() {
         double[][] matrixData = new double[x][y];
@@ -340,9 +340,9 @@ public class HeatChart {
 
     /**
      *
-     * @param p
-     * @param matrix
-     * @return
+     * @param p - point of which to find neighboring sensors
+     * @param matrix - matrix containing the sensor in question
+     * @return LinkedList<MatrixObject>
      */
     public LinkedList<MatrixObject> findNeighbourSensors(Point p, MatrixObject[][] matrix) {
 
