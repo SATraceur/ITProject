@@ -15,18 +15,21 @@
     - Added an internal matrix structure used to hold information relevant to visualising data
       from an EMOTIVE EPOCH+ EEG headset.
     - Completely changed the heatmap sheme to use a multicolour gradient
+    - Added capability to drive a strip of APA102 LED's
 
  */
 package BCILED;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
  *
- * @author yeqin
+ * @author SATraceur
  */
 public class HeatChart {
 
@@ -38,12 +41,13 @@ public class HeatChart {
     private LinkedList<Point> matrixSensorLocations;
     // 2D array to hold all matrix objects containing point data and sensor status
     private MatrixObject[][] matrixObjects;
-
+    private LEDdriver LED;
+    
     /**
-     *
-     * @param xDimension
-     * @param yDimension
-     * @param sensorLocations
+     * Constructor for HeatChart - initializes cell dimensions and adds sensors to the matrix.
+     * @param xDimension - Cell X dimension
+     * @param yDimension - Cell Y dimension
+     * @param sensorLocations - Array of points for sensor locations
      */
     public HeatChart(int xDimension, int yDimension, Point[] sensorLocations) {
 
@@ -60,16 +64,16 @@ public class HeatChart {
         for (Point p : sensorLocations) {
             matrixSensorLocations.add(new Point(p.x, p.y));
         }
-
+        
+        this.LED = new LEDdriver();
+        
         // Initilise matrix with default values of 0
         this.refreshMatrix();
     }
 
-    // Assign normalised dataset to individual sensors
-
     /**
-     *
-     * @param values
+     * Sets sensor values to values specified within list provided by the user.
+     * @param values - Array of values to be assigned to the sensors.
      */
     public void setSensorValues(double[] values) {
         int i = 0;
@@ -79,7 +83,7 @@ public class HeatChart {
     }
 
     /**
-     *
+     * Sets cell size within matrix to user specified dimensions.
      * @param cellSize
      */
     public void setCellSize(Dimension cellSize) {
@@ -87,53 +91,88 @@ public class HeatChart {
     }
 
     /**
-     *
-     * @return
+     * Calculates size of the image to be used based on matrix and cell dimensions then
+     * generates a chart and attaches the HeatMap image.
+     * 
+     * LED matrix is a 16 x 9 matrix with the following configuration
+     *           ______________________________________________________________________             
+     *  Din --->| 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 |---           
+     *          |______________________________________________________________________|   |          
+     *      ----|                                                                      |<---          
+     *     |    |______________________________________________________________________|              
+     *      --->|                                                                      |----> Dout    
+     *          |______________________________________________________________________|             
+
+     * As data is fed back in from the same side as it exits, the data for every odd row needs
+     * to be flipped to be displayed correctly on the LED matrix.
+     * 
+     * @return chartImage - Image of HeatMap 
      */
     public Image getChartImage() {
-        // Calculate size of chart
+        ArrayList<Color> LEDmatrixList = new ArrayList<>();
+        ArrayList<Color> tempMatrix = new ArrayList<>();
+        Color tempColor;
+        
+        // Calculate size of chart.
         chartSize = new Dimension(matrixObjects.length * cellSize.width, matrixObjects[0].length * cellSize.height);
 
         // Create image which we will eventually draw everything on.
         BufferedImage chartImage = new BufferedImage(chartSize.width, chartSize.height, BufferedImage.TYPE_3BYTE_BGR);
         Graphics2D chartGraphics = chartImage.createGraphics();
+        
+        // Create the heatmap image.
+        BufferedImage heatMapImage = new BufferedImage(chartSize.width, chartSize.height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D heatMapGraphics = heatMapImage.createGraphics();
 
         // Use anti-aliasing where ever possible.
         chartGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // Draw the heatmap image.
-        drawHeatMap(chartGraphics);
+        // Draw each cell of the matrix onto the heat map image (row by row).
+        for (int y = 0; y < this.y; y++) {
+            
+            // Refresh list as we only want each row by itself for later modification.
+            tempMatrix.clear();
+            for (int x = 0; x < this.x; x++) {       
+                
+                // Store each color from this particular row.
+                tempColor = getHeatMapColor((float) matrixObjects[x][y].value);          
+                tempMatrix.add(tempColor);
 
+                // Set colour depending on normalised MatrixObject values.
+                heatMapGraphics.setColor(tempColor);
+                heatMapGraphics.fillRect(x * cellSize.width, y * cellSize.height, cellSize.width, cellSize.height);
+            }
+            
+            // Flip every odd row.
+            if(y%2 != 0) {
+                Collections.reverse(tempMatrix);
+            }
+            // Append each row of LED's (odd rows flipped) to the final list.
+            LEDmatrixList.addAll(tempMatrix);
+            
+        }
+        
+        // Drive the LED's
+        this.LED.write(LEDmatrixList, this.x * this.y);      
+        // Draw the heat map onto the chart.
+        chartGraphics.drawImage(heatMapImage, 0, 0, chartSize.width, chartSize.height, null);
+        
         return chartImage;
     }
 
     /**
-     * Returns dimension of heat chart
+     * Returns dimension of chart containing the HeatMap.
      * @return chartSize  
      */
     public Dimension getChartSize() {
         return this.chartSize;
     }
 
-    private void drawHeatMap(Graphics2D chartGraphics) {
-
-        BufferedImage heatMapImage = new BufferedImage(chartSize.width, chartSize.height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D heatMapGraphics = heatMapImage.createGraphics();
-
-        // Draw each cell of the matrix
-        for (int x = 0; x < this.x; x++) {
-            for (int y = 0; y < this.y; y++) {
-                // Set colour depending on normalised MatrixObject values.
-                heatMapGraphics.setColor(getHeatMapColor((float) matrixObjects[x][y].value));
-                heatMapGraphics.fillRect(x * cellSize.width, y * cellSize.height, cellSize.width, cellSize.height);
-            }
-        }
-
-        // Draw the heat map onto the chart.
-        chartGraphics.drawImage(heatMapImage, 0, 0, chartSize.width, chartSize.height, null);
-    }
-
-    // Used code from: http://www.andrewnoske.com/wiki/Code_-_heatmaps_and_color_gradients
+    /**
+     * Used code from: http://www.andrewnoske.com/wiki/Code_-_heatmaps_and_color_gradients
+     * @param value - Value to be mapped onto 7-color gradient
+     * @return Color depending on where the supplied value lies in the color gradient
+     */
     private Color getHeatMapColor(float value) {
 
         float color[][] = {
@@ -311,22 +350,21 @@ public class HeatChart {
     }
 
     /**
-     *
+     * Refreshes the matrix with new MatrixObjects with no data.
+     * Also declares whether the objects are a sensor or not
      */
     public void refreshMatrix() {
         for (int y = 0; y < this.y; y++) {
             for (int x = 0; x < this.x; x++) {
-                // Refresh matrix with new objects and no data
                 this.matrixObjects[x][y] = new MatrixObject(new Point(x, y), 0.0);
-                // Declare whether the object is a sensor or not
                 matrixObjects[x][y].isSensor = matrixSensorLocations.contains(new Point(x, y));
             }
         }
     }
 
     /**
-     * Returns a 2D matrix containing the matrixObjects
-     * @return matrixData
+     * Returns the values of the MatrixObjects as a 2D array 
+     * @return matrixData 
      */
     public double[][] returnData() {
         double[][] matrixData = new double[x][y];
@@ -339,14 +377,13 @@ public class HeatChart {
     }
 
     /**
-     *
-     * @param p - point of which to find neighboring sensors
-     * @param matrix - matrix containing the sensor in question
-     * @return LinkedList<MatrixObject>
+     * Accepts a point p and generates a list of cells that are sensors.
+     * @param p - matrix cell in question.
+     * @return LinkedList of neighbour sensor cells.
      */
-    public LinkedList<MatrixObject> findNeighbourSensors(Point p, MatrixObject[][] matrix) {
+    public LinkedList<MatrixObject> findNeighbourSensors(Point p) {
 
-        LinkedList<MatrixObject> neighbours = findAllNeighbours(p, matrix);
+        LinkedList<MatrixObject> neighbours = findAllNeighbours(p);
 
         // Remove neighbours from list that are not sensors
         Iterator<MatrixObject> iterator = neighbours.iterator();
@@ -360,77 +397,76 @@ public class HeatChart {
     }
 
     /**
-     *
-     * @param p
-     * @param matrix
-     * @return
+     * Generates a list of neighbour cells for a provided point p.
+     * Checks if current cell is on the edge of the matrix and only adds neighbour 
+     * cells within bounds of the matrix to avoid out of bounds exceptions.
+     * @param p - matrix cell in question.
+     * @return LinkedList of neighbour cells within bounds of the matrix.
      */
-    public LinkedList<MatrixObject> findAllNeighbours(Point p, MatrixObject[][] matrix) {
+    public LinkedList<MatrixObject> findAllNeighbours(Point p) {
         LinkedList<MatrixObject> neighbours = new LinkedList();
 
-        // Check if current cell is on the edge of the matrix 
-        // Only add neighbour cells in the bounds of the matrix
         if (isTopBounded(p) && isLeftBounded(p)) {
-            neighbours.add(matrix[p.x + 1][p.y]); // East
-            neighbours.add(matrix[p.x + 1][p.y + 1]); // South-East
-            neighbours.add(matrix[p.x][p.y + 1]); // South
+            neighbours.add(this.matrixObjects[p.x + 1][p.y]); // East
+            neighbours.add(this.matrixObjects[p.x + 1][p.y + 1]); // South-East
+            neighbours.add(this.matrixObjects[p.x][p.y + 1]); // South
         } else if (isBottomBounded(p) && isLeftBounded(p)) {
-            neighbours.add(matrix[p.x][p.y - 1]); // North
-            neighbours.add(matrix[p.x + 1][p.y - 1]); // North-East
-            neighbours.add(matrix[p.x + 1][p.y]); // East
+            neighbours.add(this.matrixObjects[p.x][p.y - 1]); // North
+            neighbours.add(this.matrixObjects[p.x + 1][p.y - 1]); // North-East
+            neighbours.add(this.matrixObjects[p.x + 1][p.y]); // East
         } else if (isBottomBounded(p) && isRightBounded(p)) {
-            neighbours.add(matrix[p.x][p.y - 1]); // North
-            neighbours.add(matrix[p.x - 1][p.y - 1]); // North-West
-            neighbours.add(matrix[p.x - 1][p.y]); // West
+            neighbours.add(this.matrixObjects[p.x][p.y - 1]); // North
+            neighbours.add(this.matrixObjects[p.x - 1][p.y - 1]); // North-West
+            neighbours.add(this.matrixObjects[p.x - 1][p.y]); // West
         } else if (isTopBounded(p) && isRightBounded(p)) {
-            neighbours.add(matrix[p.x][p.y + 1]); // South
-            neighbours.add(matrix[p.x - 1][p.y + 1]); // South-West
-            neighbours.add(matrix[p.x - 1][p.y]); // West
+            neighbours.add(this.matrixObjects[p.x][p.y + 1]); // South
+            neighbours.add(this.matrixObjects[p.x - 1][p.y + 1]); // South-West
+            neighbours.add(this.matrixObjects[p.x - 1][p.y]); // West
         } else if (isTopBounded(p)) {
-            neighbours.add(matrix[p.x + 1][p.y]); // East
-            neighbours.add(matrix[p.x + 1][p.y + 1]); // South-East
-            neighbours.add(matrix[p.x][p.y + 1]); // South
-            neighbours.add(matrix[p.x - 1][p.y + 1]); // South-West
-            neighbours.add(matrix[p.x - 1][p.y]); // West
+            neighbours.add(this.matrixObjects[p.x + 1][p.y]); // East
+            neighbours.add(this.matrixObjects[p.x + 1][p.y + 1]); // South-East
+            neighbours.add(this.matrixObjects[p.x][p.y + 1]); // South
+            neighbours.add(this.matrixObjects[p.x - 1][p.y + 1]); // South-West
+            neighbours.add(this.matrixObjects[p.x - 1][p.y]); // West
         } else if (isLeftBounded(p)) {
-            neighbours.add(matrix[p.x][p.y - 1]); // North
-            neighbours.add(matrix[p.x + 1][p.y - 1]); // North-East
-            neighbours.add(matrix[p.x + 1][p.y]); // East
-            neighbours.add(matrix[p.x + 1][p.y + 1]); // South-East
-            neighbours.add(matrix[p.x][p.y + 1]); // South
+            neighbours.add(this.matrixObjects[p.x][p.y - 1]); // North
+            neighbours.add(this.matrixObjects[p.x + 1][p.y - 1]); // North-East
+            neighbours.add(this.matrixObjects[p.x + 1][p.y]); // East
+            neighbours.add(this.matrixObjects[p.x + 1][p.y + 1]); // South-East
+            neighbours.add(this.matrixObjects[p.x][p.y + 1]); // South
         } else if (isBottomBounded(p)) {
-            neighbours.add(matrix[p.x - 1][p.y]); // West
-            neighbours.add(matrix[p.x - 1][p.y - 1]); // North-West
-            neighbours.add(matrix[p.x][p.y - 1]); // North
-            neighbours.add(matrix[p.x + 1][p.y - 1]); // North-East
-            neighbours.add(matrix[p.x + 1][p.y]); // East
+            neighbours.add(this.matrixObjects[p.x - 1][p.y]); // West
+            neighbours.add(this.matrixObjects[p.x - 1][p.y - 1]); // North-West
+            neighbours.add(this.matrixObjects[p.x][p.y - 1]); // North
+            neighbours.add(this.matrixObjects[p.x + 1][p.y - 1]); // North-East
+            neighbours.add(this.matrixObjects[p.x + 1][p.y]); // East
         } else if (isRightBounded(p)) {
-            neighbours.add(matrix[p.x][p.y - 1]); // North
-            neighbours.add(matrix[p.x - 1][p.y - 1]); // North-West
-            neighbours.add(matrix[p.x - 1][p.y]); // West
-            neighbours.add(matrix[p.x - 1][p.y + 1]); // South-West
-            neighbours.add(matrix[p.x][p.y + 1]); // South
+            neighbours.add(this.matrixObjects[p.x][p.y - 1]); // North
+            neighbours.add(this.matrixObjects[p.x - 1][p.y - 1]); // North-West
+            neighbours.add(this.matrixObjects[p.x - 1][p.y]); // West
+            neighbours.add(this.matrixObjects[p.x - 1][p.y + 1]); // South-West
+            neighbours.add(this.matrixObjects[p.x][p.y + 1]); // South
         } else {
-            neighbours.add(matrix[p.x + 1][p.y]); // East
-            neighbours.add(matrix[p.x + 1][p.y + 1]); // South-East
-            neighbours.add(matrix[p.x][p.y + 1]); // South
-            neighbours.add(matrix[p.x - 1][p.y + 1]); // South-West
-            neighbours.add(matrix[p.x - 1][p.y]); // West
-            neighbours.add(matrix[p.x - 1][p.y - 1]); // North-West
-            neighbours.add(matrix[p.x][p.y - 1]); // North
-            neighbours.add(matrix[p.x + 1][p.y - 1]); // North-East  
+            neighbours.add(this.matrixObjects[p.x + 1][p.y]); // East
+            neighbours.add(this.matrixObjects[p.x + 1][p.y + 1]); // South-East
+            neighbours.add(this.matrixObjects[p.x][p.y + 1]); // South
+            neighbours.add(this.matrixObjects[p.x - 1][p.y + 1]); // South-West
+            neighbours.add(this.matrixObjects[p.x - 1][p.y]); // West
+            neighbours.add(this.matrixObjects[p.x - 1][p.y - 1]); // North-West
+            neighbours.add(this.matrixObjects[p.x][p.y - 1]); // North
+            neighbours.add(this.matrixObjects[p.x + 1][p.y - 1]); // North-East  
         }
 
         return neighbours;
     }
 
     /**
-     *
-     * @param p
-     * @return
+     * Returns true if the given point p coincides next to a sensor.
+     * @param p - matrix cell in question.
+     * @return boolean value.
      */
     public boolean hasNeighbourSensor(Point p) {
-        LinkedList<MatrixObject> list = this.findNeighbourSensors(p, this.matrixObjects);
+        LinkedList<MatrixObject> list = this.findNeighbourSensors(p);
         return !list.isEmpty();
     }
 
@@ -451,16 +487,16 @@ public class HeatChart {
     }
 
     /**
-     *
+     * Iterates over the matrix and updates matrix cell values based on neighbour cell values.
+     * Executes multiple iterations updating a temporary matrix before actually applying changes to
+     * the actual matrix in order to allow changes to propogate to the edges of the matrix.
+     * # iterations == largest matrix dimension to ensure gradient propogates across entire matrix in extreme cases
      */
     public void updateMatrix() {
         LinkedList<MatrixObject> allNeighbours, sensorNeighbours;
         MatrixObject[][] temp = this.matrixObjects;
         int maxDimension = this.x > this.y ? this.x : this.y;
 
-        // Iterate over matrix and update adjacent cells.
-        // Execute multiple iterations before actually updating matrix for additional smoothing.
-        // # iterations == largest matrix dimension to ensure gradient propogates across entire matrix in extreme cases
         for (int iterations = 0; iterations < maxDimension; iterations++) {
             boolean lastIteration = (iterations == maxDimension - 1 ? true : false);
 
@@ -468,8 +504,8 @@ public class HeatChart {
                 for (int x = 0; x < this.x; x++) {
                     if (!this.matrixObjects[x][y].isSensor) {
 
-                        allNeighbours = this.findAllNeighbours(new Point(x, y), matrixObjects);
-                        sensorNeighbours = this.findNeighbourSensors(new Point(x, y), matrixObjects);
+                        allNeighbours = this.findAllNeighbours(new Point(x, y));
+                        sensorNeighbours = this.findNeighbourSensors(new Point(x, y));
 
                         switch (sensorNeighbours.size()) {
                             case 0: // No neighbour sensors
@@ -501,13 +537,11 @@ public class HeatChart {
         }
         matrixObjects = temp;
     }
-
-    // Calculate average of cell based on neighbour values
-
+    
     /**
-     *
-     * @param neighbours
-     * @return
+     * Calculate color of a specific cell based on neighbour values.
+     * @param neighbours - list of neighbour cells.
+     * @return Average value of neighbour cells.
      */
     public double avgValue(LinkedList<MatrixObject> neighbours) {
         double val = 0;

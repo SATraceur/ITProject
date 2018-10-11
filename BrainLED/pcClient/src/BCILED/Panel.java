@@ -25,22 +25,22 @@ public class Panel extends JPanel {
     public Panel(int x, int y) {
 
         // Decided to leave sensor positions in here as they do not need to be dynamically modified by the user
-        int xScale = 20, yScale = 8;
+        int xScale = 0, yScale = 0;
         Point[] sensorCoordinates = {
-            new Point(26 + xScale, 10 + yScale), // AF3
-            new Point(34 + xScale, 10 + yScale), // AF4
-            new Point(20 + xScale, 22 + yScale), // F7
-            new Point(26 + xScale, 22 + yScale), // F3
-            new Point(34 + xScale, 22 + yScale), // F4
-            new Point(40 + xScale, 22 + yScale), // F8
-            new Point(24 + xScale, 34 + yScale), // FC5
-            new Point(36 + xScale, 34 + yScale), // FC6
-            new Point(18 + xScale, 44 + yScale), // T7
-            new Point(42 + xScale, 44 + yScale), // T8
-            new Point(24 + xScale, 56 + yScale), // P7
-            new Point(36 + xScale, 56 + yScale), // P8
-            new Point(26 + xScale, 68 + yScale), // O1
-            new Point(36 + xScale, 68 + yScale) // O2
+            new Point(5 + xScale, 0 + yScale), // AF3
+            new Point(10 + xScale, 0 + yScale), // AF4
+            new Point(4 + xScale, 1 + yScale), // F7
+            new Point(6 + xScale, 1 + yScale), // F3
+            new Point(9 + xScale, 1 + yScale), // F4
+            new Point(11 + xScale, 1 + yScale), // F8
+            new Point(5 + xScale, 2 + yScale), // FC5
+            new Point(10 + xScale, 2 + yScale), // FC6
+            new Point(4 + xScale, 3 + yScale), // T7
+            new Point(11 + xScale, 3 + yScale), // T8
+            new Point(5 + xScale, 5 + yScale), // P7
+            new Point(10 + xScale, 5 + yScale), // P8
+            new Point(6 + xScale, 7 + yScale), // O1
+            new Point(9 + xScale, 7 + yScale) // O2
         };
 
         // Create new heatchart

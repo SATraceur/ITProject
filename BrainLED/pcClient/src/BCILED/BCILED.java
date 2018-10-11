@@ -26,6 +26,7 @@ public class BCILED {
 
     /**
      * build the heatMap display window
+     *
      * @return
      */
     public static Panel setWindowns() {
@@ -35,8 +36,8 @@ public class BCILED {
         int y = s.nextInt();
         s.close();
         JFrame window = new JFrame("HeatMap GUI");
-        Panel panel = new Panel(100, 100); // heatmap dimensions
-        panel.setCellSize(new Dimension(3,3)); // heatmap cell size
+        Panel panel = new Panel(16,9); // heatmap dimensions
+        panel.setCellSize(new Dimension(x, y)); // heatmap cell size
         window.setResizable(true);
         window.setLocationRelativeTo(null);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -45,16 +46,16 @@ public class BCILED {
         window.setVisible(true);
         return panel;
     }
-
-
-
+    
     /**
      * start the program
+     * 
+     *
      * @param args
      * @throws Exception
      */
     public static void main(String args[]) throws Exception {
-
+        
         // Heatmap GUI related stuff
         Panel panel = BCILED.setWindowns();
 
@@ -75,7 +76,7 @@ public class BCILED {
         double[] gammaValues = new double[14];
         double[] thetaValues = new double[14];
         double[] normalizedAlphaValues = new double[14];
-        double min, max;
+        double min, max;      
 
         // Change this to true to print data from EEG headset
         boolean debug = false;
@@ -155,7 +156,7 @@ public class BCILED {
             // Generate random alphaValues for testing and store min/max for normalisation
             for (int i = 0; i < 14; i++) {
 
-                alphaValues[i] = rand.nextDouble() * 20;
+                alphaValues[i] = rand.nextDouble() * 20; // Comment this out to recieve actual data
                 if (alphaValues[i] > max) {
                     max = alphaValues[i];
                 } else if (alphaValues[i] < min) {
@@ -171,15 +172,18 @@ public class BCILED {
             // Update heatmap with normalised random data
             panel.setHeatMapSensorValues(normalizedAlphaValues);
             panel.update();
+            
+            
 
         }
+
 
         Edk.INSTANCE.IEE_EngineDisconnect();
         Edk.INSTANCE.IEE_EmoStateFree(eState);
         Edk.INSTANCE.IEE_EmoEngineEventFree(eEvent);
         System.out.println("Disconnected!");
         String address = "localhost";
-//using socket when only we cannot get it on the PI working properly 
+        //using socket when only we cannot get it on the PI working properly 
         while (true) {
             Socket s1 = new Socket(address, 5000);
 
