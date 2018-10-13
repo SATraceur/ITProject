@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 
 /**
  *
- * @author Hardware Group
+ * @author SATraceur
  */
 public class Panel extends JPanel {
 
@@ -44,71 +44,68 @@ public class Panel extends JPanel {
         };
 
         // Create new heatchart
-        HC = new HeatChart(x, y, sensorCoordinates);
+        this.HC = new HeatChart(x, y, sensorCoordinates);
         // Default to 1x1 cells
-        HC.setCellSize(new Dimension(1, 1));
+        this.HC.setCellSize(new Dimension(1, 1));
     }
-
-    
 
     /**
      * Changes cell size and updates matrix
      * @param d (2 dimensions)
      */
     public void setCellSize(Dimension d) {
-        HC.setCellSize(d);
+        this.HC.setCellSize(d);
         this.update();
     }
 
-   
-
     /**
-     * Reset all matrix values to 0 and update sensor values
+     * Reset all matrix values to 0 and update sensor values.
      * @param values
      */
     public void setHeatMapSensorValues(double[] values) {
-        HC.refreshMatrix();
-        HC.setSensorValues(values);
+        this.HC.refreshMatrix();
+        this.HC.setSensorValues(values);
     }
-
-    
 
     /**
      * Update all cells of the matrix based on the sensor values and reconstruct image
+     * TODO: Test functionality without sleep, remove if possible. 
      */
     public void update() {
-        HC.updateMatrix();
+        this.HC.updateMatrix();
         this.draw();
         this.repaint();
 
-        try {
-            Thread.sleep(200); // TODO: Change this at some stage 
-        } catch (InterruptedException ex) {
-            ex.toString();
-        }
-
+//        try {
+//            Thread.sleep(200); 
+//        } catch (InterruptedException ex) {
+//            ex.toString();
+//        }
     }
 
     /**
-     * return map size
-     * @return
+     * Returns map size based on number of cells and cell dimensions
+     * @return - ChartSize
      */
     public Dimension getMapSize() {
-        return HC.getChartSize();
-    }
-
-    private void draw() {
-        img = (BufferedImage) HC.getChartImage();
-        g2 = (Graphics2D) img.getGraphics();
+        return this.HC.getChartSize();
     }
 
     /**
-     *
+     * Draws the HeatMap.
+     */
+    private void draw() {
+        this.img = (BufferedImage) this.HC.getChartImage();
+        this.g2 = (Graphics2D) this.img.getGraphics();
+    }
+
+    /**
+     * 
      * @param g
      */
     @Override
     public void paintComponent(Graphics g) {
-        g.drawImage(img, 0, 0, null);
+        g.drawImage(this.img, 0, 0, null);
     }
 
 }

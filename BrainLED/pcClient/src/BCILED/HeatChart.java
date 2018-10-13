@@ -13,8 +13,8 @@
  *  Changes made include:
     - Removed axis titles, margins and unnessecary getter/setter methods
     - Added an internal matrix structure used to hold information relevant to visualising data
-      from an EMOTIVE EPOCH+ EEG headset.
-    - Completely changed the heatmap sheme to use a multicolour gradient
+      from an EMOTIVE EPOC+ EEG headset.
+    - Completely changed the heatmap scheme to use a multicolour gradient
     - Added capability to drive a strip of APA102 LED's
 
  */
@@ -33,18 +33,18 @@ import java.util.LinkedList;
  */
 public class HeatChart {
 
-    // Dimensions used for drawing the chart
+    // Dimensions used for drawing the chart.
     private Dimension cellSize;
     private Dimension chartSize;
     private int x, y;
-    // List containing the 14 sensors for the EPOC+
+    // List containing the 14 sensors for the EPOC+.
     private LinkedList<Point> matrixSensorLocations;
-    // 2D array to hold all matrix objects containing point data and sensor status
+    // 2D array to hold all matrix objects containing point data and sensor status.
     private MatrixObject[][] matrixObjects;
     private LEDdriver LED;
     
     /**
-     * Constructor for HeatChart - initializes cell dimensions and adds sensors to the matrix.
+     * Constructor for HeatChart - Initializes cell dimensions and adds sensors to the matrix.
      * @param xDimension - Cell X dimension
      * @param yDimension - Cell Y dimension
      * @param sensorLocations - Array of points for sensor locations
@@ -115,18 +115,14 @@ public class HeatChart {
         
         // Calculate size of chart.
         chartSize = new Dimension(matrixObjects.length * cellSize.width, matrixObjects[0].length * cellSize.height);
-
         // Create image which we will eventually draw everything on.
         BufferedImage chartImage = new BufferedImage(chartSize.width, chartSize.height, BufferedImage.TYPE_3BYTE_BGR);
-        Graphics2D chartGraphics = chartImage.createGraphics();
-        
+        Graphics2D chartGraphics = chartImage.createGraphics();      
         // Create the heatmap image.
         BufferedImage heatMapImage = new BufferedImage(chartSize.width, chartSize.height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D heatMapGraphics = heatMapImage.createGraphics();
-
         // Use anti-aliasing where ever possible.
         chartGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
         // Draw each cell of the matrix onto the heat map image (row by row).
         for (int y = 0; y < this.y; y++) {
             
@@ -137,7 +133,6 @@ public class HeatChart {
                 // Store each color from this particular row.
                 tempColor = getHeatMapColor((float) matrixObjects[x][y].value);          
                 tempMatrix.add(tempColor);
-
                 // Set colour depending on normalised MatrixObject values.
                 heatMapGraphics.setColor(tempColor);
                 heatMapGraphics.fillRect(x * cellSize.width, y * cellSize.height, cellSize.width, cellSize.height);
@@ -148,8 +143,7 @@ public class HeatChart {
                 Collections.reverse(tempMatrix);
             }
             // Append each row of LED's (odd rows flipped) to the final list.
-            LEDmatrixList.addAll(tempMatrix);
-            
+            LEDmatrixList.addAll(tempMatrix);       
         }
         
         // Drive the LED's
@@ -169,12 +163,13 @@ public class HeatChart {
     }
 
     /**
-     * Used code from: http://www.andrewnoske.com/wiki/Code_-_heatmaps_and_color_gradients
+     * Based on code from: http://www.andrewnoske.com/wiki/Code_-_heatmaps_and_color_gradients
      * @param value - Value to be mapped onto 7-color gradient
      * @return Color depending on where the supplied value lies in the color gradient
      */
     private Color getHeatMapColor(float value) {
 
+         // <editor-fold defaultstate="collapsed" desc="Color LUT">
         float color[][] = {
             {0, 0, 0}, // black
             {0.05f, 0, 0.05f},
@@ -327,6 +322,7 @@ public class HeatChart {
             {1, 0.04f, 0},
             {1, 0.02f, 0},
             {1, 0, 0}}; //red
+        // </editor-fold>
 
         float fractBetween = 0;
         int NUM_COLORS = color.length, idx1, idx2;
@@ -337,8 +333,8 @@ public class HeatChart {
             idx1 = idx2 = NUM_COLORS - 1;
         } else {
             value *= (NUM_COLORS - 1);
-            idx1 = (int) Math.floor(value);          // the desired color will be after this index.
-            idx2 = idx1 + 1;                         // ... and before this index (inclusive).
+            idx1 = (int) Math.floor(value);          // The desired color will be after this index,
+            idx2 = idx1 + 1;                         // and before this index (inclusive).
             fractBetween = value - (float) idx1;     // Distance between the two indexes (0-1).
         }
 
@@ -351,7 +347,7 @@ public class HeatChart {
 
     /**
      * Refreshes the matrix with new MatrixObjects with no data.
-     * Also declares whether the objects are a sensor or not
+     * Also declares whether the objects are a sensor or not.
      */
     public void refreshMatrix() {
         for (int y = 0; y < this.y; y++) {
@@ -363,7 +359,7 @@ public class HeatChart {
     }
 
     /**
-     * Returns the values of the MatrixObjects as a 2D array 
+     * Returns the values of the MatrixObjects as a 2D array.
      * @return matrixData 
      */
     public double[][] returnData() {
@@ -385,7 +381,7 @@ public class HeatChart {
 
         LinkedList<MatrixObject> neighbours = findAllNeighbours(p);
 
-        // Remove neighbours from list that are not sensors
+        // Remove neighbours from list that are not sensors.
         Iterator<MatrixObject> iterator = neighbours.iterator();
         while (iterator.hasNext()) {
             MatrixObject obj = iterator.next();
@@ -398,7 +394,7 @@ public class HeatChart {
 
     /**
      * Generates a list of neighbour cells for a provided point p.
-     * Checks if current cell is on the edge of the matrix and only adds neighbour 
+     * Checks if current cell is on the edge of the matrix and only adds neighbour. 
      * cells within bounds of the matrix to avoid out of bounds exceptions.
      * @param p - matrix cell in question.
      * @return LinkedList of neighbour cells within bounds of the matrix.
@@ -490,7 +486,7 @@ public class HeatChart {
      * Iterates over the matrix and updates matrix cell values based on neighbour cell values.
      * Executes multiple iterations updating a temporary matrix before actually applying changes to
      * the actual matrix in order to allow changes to propogate to the edges of the matrix.
-     * # iterations == largest matrix dimension to ensure gradient propogates across entire matrix in extreme cases
+     * # iterations == largest matrix dimension to ensure gradient propogates across entire matrix in extreme cases.
      */
     public void updateMatrix() {
         LinkedList<MatrixObject> allNeighbours, sensorNeighbours;

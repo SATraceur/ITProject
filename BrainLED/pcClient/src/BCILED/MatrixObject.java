@@ -1,49 +1,25 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package BCILED;
 
 import java.awt.Point;
 
 /**
- *
- * @author Anonymous
+ * Object to hold the matrix cell data including it's position within the matrix, 
+ * whether it's a sensor or not and it's value.
+ * @author SATraceur
  */
 public class MatrixObject {
 
-    /**
-     *
-     */
     public Point point;
-
-    /**
-     *
-     */
     public boolean isSensor;
-
-    /**
-     *
-     */
     public double value;
 
     /**
-     *
-     * @param p
-     * @param val
+     * MatrixObject constructor
+     * @param p - position of cell within the matrix.
+     * @param val - value of the cell.
      */
     public MatrixObject(Point p, double val) {
         this.point = p;
         this.value = val;
-    }
-
-    /**
-     *
-     * @return
-     */
-    @Override
-    public String toString() {
-        return "X: " + this.point.x + " Y: " + this.point.y + " VALUE: " + this.value;
     }
 }

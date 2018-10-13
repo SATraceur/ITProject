@@ -12,32 +12,28 @@ import java.util.Random;
 import javax.swing.JFrame;
 
 /**
- * TODO: - Design kernel to be used for gaussian smoothing - Implement a simple
- * gaussian smoothing/blur algorithm
+ * TODO: - Design standard distribution kernel to be used for gaussian smoothing 
+ *       - Implement a simple gaussian smoothing/blur algorithm
+ *       - Add functionality to read from LSL stream rather than from EEG headset directly
  *
- * NOTES: - https://homepages.inf.ed.ac.uk/rbf/HIPR2/gsmooth.htm -
- * https://en.wikipedia.org/wiki/Gaussian_blur
+ * NOTES: - https://homepages.inf.ed.ac.uk/rbf/HIPR2/gsmooth.htm 
+ *        - https://en.wikipedia.org/wiki/Gaussian_blur
  *
- * REFERENCES: -
- * http://www.andrewnoske.com/wiki/Code_-_heatmaps_and_color_gradients -
- * http://www.tc33.org/projects/jheatchart/
+ * REFERENCES: - http://www.andrewnoske.com/wiki/Code_-_heatmaps_and_color_gradients 
+ *             - http://www.tc33.org/projects/jheatchart/
  */
+
 public class BCILED {
 
     /**
-     * build the heatMap display window
+     * Build the HeatMap display window.
      *
      * @return
      */
-    public static Panel setWindowns() {
-        System.out.println("Please Enter X and Y cell size (Integer Value): ");
-        Scanner s = new Scanner(System.in);
-        int x = s.nextInt();
-        int y = s.nextInt();
-        s.close();
+    public static Panel setWindow() {
         JFrame window = new JFrame("HeatMap GUI");
         Panel panel = new Panel(16,9); // heatmap dimensions
-        panel.setCellSize(new Dimension(x, y)); // heatmap cell size
+        panel.setCellSize(new Dimension(50, 50)); // heatmap cell size
         window.setResizable(true);
         window.setLocationRelativeTo(null);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -46,9 +42,9 @@ public class BCILED {
         window.setVisible(true);
         return panel;
     }
-    
+
     /**
-     * start the program
+     * Start the program.
      * 
      *
      * @param args
@@ -56,10 +52,10 @@ public class BCILED {
      */
     public static void main(String args[]) throws Exception {
         
-        // Heatmap GUI related stuff
-        Panel panel = BCILED.setWindowns();
+        // Heatmap GUI/LED related stuff.
+        Panel panel = BCILED.setWindow();
 
-        // EEG headset related stuff
+        // EEG headset related stuff.
         Pointer eEvent = Edk.INSTANCE.IEE_EmoEngineEventCreate();
         Pointer eState = Edk.INSTANCE.IEE_EmoStateCreate();
         IntByReference userID = null;
@@ -68,7 +64,7 @@ public class BCILED {
         Edk.IEE_DataChannels_t dataChannel;
         userID = new IntByReference(0);
 
-        // Stuff for storing data
+        // Stuff for storing data.
         Random rand = new Random();
         double[] alphaValues = new double[14];
         double[] lowBetaValues = new double[14];
@@ -76,7 +72,15 @@ public class BCILED {
         double[] gammaValues = new double[14];
         double[] thetaValues = new double[14];
         double[] normalizedAlphaValues = new double[14];
-        double min, max;      
+        double[] normalizedLowBetaValues = new double[14];
+        double[] normalizedHighBetaValues = new double[14];
+        double[] normalizedGammaValues = new double[14];
+        double[] normalizedThetaValues = new double[14];
+        double minAlpha, maxAlpha;
+        double minLowBeta, maxLowBeta;
+        double minHighBeta, maxHighBeta;
+        double minGamma, maxGamma;
+        double minTheta, maxTheta;
 
         // Change this to true to print data from EEG headset
         boolean debug = false;
@@ -149,34 +153,79 @@ public class BCILED {
                 }
             }
 
-            // Reset min/max variables from previous iteration
-            min = Double.MAX_VALUE;
-            max = Double.MIN_VALUE;
+            // Reset min/max variables from previous iteration.
+            minAlpha =  minLowBeta = minHighBeta = minGamma = minTheta = Double.MAX_VALUE;
+            maxAlpha = maxLowBeta = maxHighBeta =  maxGamma = maxTheta = Double.MIN_VALUE;
 
-            // Generate random alphaValues for testing and store min/max for normalisation
+            // Store min/max of each frequency for normalisation.
             for (int i = 0; i < 14; i++) {
-
                 alphaValues[i] = rand.nextDouble() * 20; // Comment this out to recieve actual data
-                if (alphaValues[i] > max) {
-                    max = alphaValues[i];
-                } else if (alphaValues[i] < min) {
-                    min = alphaValues[i];
+                             
+                if (alphaValues[i] > maxAlpha) {
+                    maxAlpha = alphaValues[i];
+                } else if (alphaValues[i] < minAlpha) {
+                    minAlpha = alphaValues[i];
                 }
+                
+                if (lowBetaValues[i] > maxLowBeta) {
+                    maxLowBeta = lowBetaValues[i];
+                } else if (lowBetaValues[i] < minLowBeta) {
+                    minLowBeta = lowBetaValues[i];
+                }
+                
+                if (highBetaValues[i] > maxHighBeta) {
+                    maxHighBeta = highBetaValues[i];
+                } else if (highBetaValues[i] < minHighBeta) {
+                    minHighBeta = highBetaValues[i];
+                }
+                
+                if (gammaValues[i] > maxGamma) {
+                    maxGamma = gammaValues[i];
+                } else if (gammaValues[i] < minGamma) {
+                    minGamma = gammaValues[i];
+                }
+                
+                if (thetaValues[i] > maxTheta) {
+                    maxTheta = thetaValues[i];
+                } else if (thetaValues[i] < minTheta) {
+                    minTheta = thetaValues[i];
+                }
+                       
             }
 
-            // Normalise data such that it ranges from 0 - 1
+            // Normalise data such that it ranges from 0 - 1.
             for (int i = 0; i < 14; i++) {
-                normalizedAlphaValues[i] = (alphaValues[i] - min) / (max - min);
+                normalizedAlphaValues[i] = (alphaValues[i] - minAlpha) / (maxAlpha - minAlpha);
+                normalizedLowBetaValues[i] = (lowBetaValues[i] - minLowBeta) / (maxLowBeta - minLowBeta);
+                normalizedHighBetaValues[i] = (highBetaValues[i] - minHighBeta) / (maxHighBeta - minHighBeta);
+                normalizedGammaValues[i] = (gammaValues[i] - minGamma) / (maxGamma - minGamma);
+                normalizedThetaValues[i] = (thetaValues[i] - minTheta) / (maxTheta - minTheta);
             }
 
-            // Update heatmap with normalised random data
-            panel.setHeatMapSensorValues(normalizedAlphaValues);
+            int temporary = 0;
+            
+            // Update heatmap with normalised data.
+            switch(temporary) {
+                case 0:
+                    panel.setHeatMapSensorValues(normalizedAlphaValues);
+                    break; 
+                case 1:
+                    panel.setHeatMapSensorValues(normalizedLowBetaValues);
+                    break;
+                case 2:
+                    panel.setHeatMapSensorValues(normalizedHighBetaValues);
+                    break;
+                case 3:
+                    panel.setHeatMapSensorValues(normalizedGammaValues);
+                    break;
+                case 4:
+                    panel.setHeatMapSensorValues(normalizedThetaValues);
+                    break;     
+            }
+               
             panel.update();
-            
-            
-
+                       
         }
-
 
         Edk.INSTANCE.IEE_EngineDisconnect();
         Edk.INSTANCE.IEE_EmoStateFree(eState);

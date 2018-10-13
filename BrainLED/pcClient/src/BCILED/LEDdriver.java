@@ -6,18 +6,13 @@ import java.util.ArrayList;
 
 /**
  * APA102 specifications can be found here: https://cdn-shop.adafruit.com/datasheets/APA102.pdf
- * @author satraceur
+ * @author SATraceur
  */
 public class LEDdriver {
 
     private GpioController gpio;
     private GpioPinDigitalOutput data;
     private GpioPinDigitalOutput clk;   
-    
-    // TEST VARIABLES
-    public boolean timing = false;
-    public boolean debug = false;
-    public int delayTime = 1;
     
     /**
     * LEDdriver constructor gets a handle to the GPIO controller before defining
@@ -51,9 +46,8 @@ public class LEDdriver {
      * ---------------------------------------------
      */
     private void startFrame() {
-        if(debug) System.out.println("Sending start frame...");
         for(int i = 0; i < 4; i++ ) {
-            this.transfer(0);
+            this.transfer(0b00000000);
         }   
     }
 
@@ -63,9 +57,8 @@ public class LEDdriver {
      * @param count - 16-bit int representing the number of pixels in the LED strip.
      */
     private void endFrame(int pixels) {
-        if(debug) System.out.println("Sending end frame...");
         for (short i = 0; i <  (pixels + 15)/16; i++) {
-            transfer(255);
+            transfer(0b11111111);
         }
         data.low();
         clk.low();     
@@ -80,8 +73,7 @@ public class LEDdriver {
      * @param color - User specified color of the LED
      */
     private void sendColorFrame(Color color) {
-        if(debug) System.out.println("Sending color:" + color);
-        transfer(255); // Default to max brightness
+        transfer(0b11100111); // Default to 1/4 brightness
         transfer(color.getBlue());
         transfer(color.getGreen());
         transfer(color.getRed());
@@ -92,19 +84,11 @@ public class LEDdriver {
      * Data is latched via the APA102 on the rising edge of the clk signal.
      * @param b - Byte to be transmitted over the data pin
      */
-    private void transfer(int b) {        
-        if(debug) System.out.println("Sending: " + b);
-    
-        try {         
-            for(int i = 7; i >= 0; i--) {
-                data.setState((b >> i & 1) > 0 ? true : false);
-                if(timing) Thread.sleep(delayTime);
-                clk.high();
-                if(timing) Thread.sleep(delayTime);
-                clk.low();
-            }          
-        } catch (InterruptedException e) {
-            
-        }
+    private void transfer(int b) {         
+        for(int i = 7; i >= 0; i--) {
+            data.setState((b >> i & 1) > 0 ? true : false);
+            clk.high();
+            clk.low();
+        }                  
     }
 }
